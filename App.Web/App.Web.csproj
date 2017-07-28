@@ -1,0 +1,78 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
+    <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
+    <UserSecretsId>aspnet-App.Web-1475A721-47E6-4484-A5C2-51B650E1ECB3</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Client\Actions\NotesAction.ts" />
+    <None Remove="Client\Api\NotesApi.ts" />
+    <None Remove="Client\Components\App.tsx" />
+    <None Remove="Client\Components\Home.tsx" />
+    <None Remove="Client\Components\Navigation.tsx" />
+    <None Remove="Client\Components\Notes\Note.tsx" />
+    <None Remove="Client\Components\Notes\Notes.tsx" />
+    <None Remove="Client\index.tsx" />
+    <None Remove="Client\Reducers\Reducers.ts" />
+    <None Remove="Client\Routes.tsx" />
+    <None Remove="Client\Store\ConfigureStore.ts" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.0-preview2-final" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.0-preview2-final" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <TypeScriptCompile Include="Client\Actions\NotesAction.ts" />
+    <TypeScriptCompile Include="Client\Api\models.ts" />
+    <TypeScriptCompile Include="Client\Api\NotesApi.ts" />
+    <TypeScriptCompile Include="Client\Components\App.tsx" />
+    <TypeScriptCompile Include="Client\Components\Home.tsx" />
+    <TypeScriptCompile Include="Client\Components\Navigation.tsx" />
+    <TypeScriptCompile Include="Client\Components\Notes\Note.tsx" />
+    <TypeScriptCompile Include="Client\Components\Notes\Notes.tsx" />
+    <TypeScriptCompile Include="Client\index.tsx" />
+    <TypeScriptCompile Include="Client\Reducers\NotesReducer.tsx" />
+    <TypeScriptCompile Include="Client\Reducers\Reducers.ts" />
+    <TypeScriptCompile Include="Client\Routes.tsx" />
+    <TypeScriptCompile Include="Client\Store\ApplicationStore.ts" />
+    <TypeScriptCompile Include="Client\Store\ConfigureStore.ts" />
+  </ItemGroup>
+
+  <Target Name="DebugRunWebpack" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' ">
+    <Exec Command="node --version" ContinueOnError="true">
+      <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
+    </Exec>
+    <Error Condition="'$(ErrorCode)' != '0'" Text="Node.js is required to build and run this project. To continue, please install Node.js from https://nodejs.org/, and then restart your command prompt or IDE." />
+
+    <Message Importance="high" Text="Performing first-run Webpack build..." />
+    <Exec Command="node node_modules/webpack/bin/webpack.js --config webpack.config.vendor.js" />
+    <Exec Command="node node_modules/webpack/bin/webpack.js" />
+  </Target>
+
+  <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
+    <Exec Command="npm install" />
+    <Exec Command="node node_modules/webpack/bin/webpack.js --config webpack.config.vendor.js --env.prod" />
+    <Exec Command="node node_modules/webpack/bin/webpack.js --env.prod" />
+
+    <ItemGroup>
+      <DistFiles Include="wwwroot\**; Client\**" />
+      <ResolvedFileToPublish Include="@(DistFiles->'%(FullPath)')" Exclude="@(ResolvedFileToPublish)">
+        <RelativePath>%(DistFiles.Identity)</RelativePath>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      </ResolvedFileToPublish>
+    </ItemGroup>
+  </Target>
+
+</Project>
