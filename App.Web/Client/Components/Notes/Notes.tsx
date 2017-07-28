@@ -5,17 +5,51 @@ import * as NotesActions from '../../Actions/NotesAction'
 import { Note } from './Note';
 import * as StoreModel from '../../Store/ApplicationStore';
 import * as models from '../../Api/models';
+import { stringify, parse } from 'query-string';
 
 type NotesProps =
     StoreModel.NotesState
     & typeof NotesActions.notesAction
     & RouteComponentProps<models.NotesFilter>;
 
+type NoteQuerySchema = {
+    nameFilter: string,
+    onlyWithComments: boolean,
+    minDate: Date,
+    maxDate: Date,
+    page: number,
+    count: number
+}
+
 class Notes extends React.Component<NotesProps, {}> {
+    getFilter(): models.NotesFilter {
+        let query = parse(this.props.location.search) as NoteQuerySchema;
+
+        return {
+            dateRange: {
+                maxDate: query.maxDate,
+                minDate: query.minDate
+            },
+            nameFilter: query.nameFilter,
+            onlyWithComments: query.onlyWithComments,
+            pager: {
+                count: query.count,
+                page: query.page
+            }
+        };
+    }
+
+
+
+
+
     componentWillMount() {
         let filter = this.props.filter || { pager: { count: 10, page: 0 } } as models.NotesFilter;
 
-        console.log(JQuery.param(this.props.filter));
+        let obj = stringify(filter);
+
+
+        let qs = parse(obj)
 
 
         this.props.getNotes(filter);
